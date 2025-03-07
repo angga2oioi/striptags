@@ -34,7 +34,10 @@ export class StateMachine {
     }
 }
 
-export function striptags(text: string, options: Partial<StateMachineOptions> = {}): string {
+export function striptags(text: string | null | undefined, options: Partial<StateMachineOptions> = {}): string {
+    if (typeof text !== 'string') {
+        return "";
+    }
     return new StateMachine(options).consume(text?.toString());
 }
 
