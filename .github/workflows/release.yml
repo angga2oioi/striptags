@@ -27,16 +27,28 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Backup package.json before switching branches
+          cp package.json /tmp/package.json
+          cp README.md /tmp/README.md || true
+          cp LICENSE /tmp/LICENSE || true
+
+          # Switch to the orphan release branch
           git checkout --orphan release
-          git reset --hard
-          
-          # Move built files & package.json
-          mv dist/* .  
-          cp package.json .  # Copy package.json to release branch
+          git reset --hard  # Unstage all files but keep them
+
+          # Restore package.json and other important files
+          mv /tmp/package.json .
+          mv /tmp/README.md . || true
+          mv /tmp/LICENSE . || true
+
+          # Move built files
+          mv dist/* .
 
           # Remove unnecessary files
           rm -rf dist/ .github/ node_modules/ src/
 
+          # Commit & push
           git add .
           git commit -m "Auto-build dist for release"
           git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" release
