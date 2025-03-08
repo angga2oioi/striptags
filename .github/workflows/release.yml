@@ -21,7 +21,7 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Push only dist/ to release branch
+      - name: Push only necessary files to release branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -29,8 +29,14 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git checkout --orphan release
           git reset --hard
-          mv dist/* .  # Move dist files to root
-          rm -rf dist/ .github/ node_modules/ src/  # Remove unnecessary files
+          
+          # Move built files & package.json
+          mv dist/* .  
+          cp package.json .  # Copy package.json to release branch
+
+          # Remove unnecessary files
+          rm -rf dist/ .github/ node_modules/ src/
+
           git add .
           git commit -m "Auto-build dist for release"
           git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" release
