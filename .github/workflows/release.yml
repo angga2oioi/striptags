@@ -22,15 +22,15 @@ jobs:
         run: npm run build
 
       - name: Push only dist/ to release branch
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan release
-          git reset --hard
-          mv dist/* .  # Move all dist files to root
-          rm -rf dist/ .github/ node_modules/ src/  # Delete everything except built files
-          git add .
-          git commit -m "Auto-build dist for release"
-          git push --force origin release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan release
+          git reset --hard
+          mv dist/* .  # Move dist files to root
+          rm -rf dist/ .github/ node_modules/ src/  # Remove unnecessary files
+          git add .
+          git commit -m "Auto-build dist for release"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" release
