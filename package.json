@@ -45,6 +45,7 @@
     "scripts": {
         "test": "jest",
         "lint": "eslint .",
-        "prepublishOnly": "eslint . && rollup -c"
+        "prepublishOnly": "eslint . && rollup -c",
+        "build": "rollup -c"
     }
 }

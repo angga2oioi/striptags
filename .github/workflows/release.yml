@@ -1,0 +1,36 @@
+name: Build & Deploy to Release
+
+on:
+  push:
+    branches:
+      - main  # Runs only when main branch is updated
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Push only dist/ to release branch
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan release
+          git reset --hard
+          mv dist/* .  # Move all dist files to root
+          rm -rf dist/ .github/ node_modules/ src/  # Delete everything except built files
+          git add .
+          git commit -m "Auto-build dist for release"
+          git push --force origin release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
