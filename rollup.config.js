@@ -20,7 +20,7 @@ export default [
                 format: "cjs",
                 dir: "dist/cjs",
                 entryFileNames: "[name].cjs",
-                exports: "default", // Ensures proper compatibility with CommonJS
+                exports: "auto", // Allow default & named exports in CommonJS
             },
         ],
         plugins: [typescript()],
